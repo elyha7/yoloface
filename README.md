@@ -2,7 +2,7 @@
 
 ## Description
 The project is a wrap over [yolov5-face](https://github.com/deepcam-cn/yolov5-face) repo. Made simple portable interface for model import and inference. Model detects faces on images and returns bounding boxes and coordinates of 5 facial keypoints, which can be used for face alignment.
-## Description
+## Installation
 ```bash
 pip install -r requirements.txt
 ```
