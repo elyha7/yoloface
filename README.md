@@ -8,11 +8,11 @@ pip install -r requirements.txt
 ```
 ## Usage example
 ```python
-from yoloface import YoloDetector
+from face_detector import YoloDetector
 import numpy as np
 from PIL import Image
 
-model = YoloFace(target_size=720,gpu=0,min_face=90)
+model = YoloDetector(target_size=720,gpu=0,min_face=90)
 orgimg = np.array(Image.open('test_image.jpg'))
 bboxes,points = model.predict(orgimg)
 ```
