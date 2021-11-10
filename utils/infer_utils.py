@@ -20,7 +20,7 @@ def decode_infer(output, stride):
 
     shiftx = torch.arange(0, gridsize, dtype=torch.float32)
     shifty = torch.arange(0, gridsize, dtype=torch.float32)
-    shifty, shiftx = torch.meshgrid([shiftx, shifty])
+    shifty, shiftx = torch.meshgrid([shiftx, shifty], indexing='ij')
     shiftx = shiftx.unsqueeze(-1).repeat(bz, 1, 1, self.gt_per_grid)
     shifty = shifty.unsqueeze(-1).repeat(bz, 1, 1, self.gt_per_grid)
 
