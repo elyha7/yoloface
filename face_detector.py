@@ -13,6 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname("__file__"), '..'))
 from models.common import Conv
 from models.yolo import Model
 from utils.datasets import letterbox
+from utils.preprocess_utils import align_faces
 from utils.general import check_img_size, non_max_suppression_face, \
     scale_coords,scale_coords_landmarks,filter_boxes
 
@@ -131,7 +132,9 @@ class YoloDetector:
             return True
         else:
             return False
-
+    def align(self,img,points):
+        crops = [align_faces(img,landmark=np.array(i)) for i in points]
+        return crops
     def predict(self, imgs, conf_thres = 0.3, iou_thres = 0.5):
         '''
             Get bbox coordinates and keypoints of faces on original image.
@@ -144,7 +147,6 @@ class YoloDetector:
                 points: list of arrays with coordinates of 5 facial keypoints (eyes, nose, lips corners).
         '''
         # Pass input images through face detector
-        
         if type(imgs) != list:
             images = [imgs]
         else:
@@ -163,4 +165,4 @@ class YoloDetector:
         return self.predict(*args)
 
 if __name__=='__main__':
-    a = YoloFace()
+    a = YoloDetector()
