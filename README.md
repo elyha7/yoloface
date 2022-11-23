@@ -20,6 +20,10 @@ You can also pass several images packed in a list to get multi-image predictions
 ```python
 bboxes,points = model.predict([image1,image2])
 ```
+You can align faces, using `align` class method for predicted keypoints.
+```python
+crops = detector.align(orgimg, points[0])
+```
 If you want to use model class outside root folder, export it into you PYTHONPATH
 ```bash
 export PYTHONPATH="${PYTHONPATH}:/path/to/yoloface/project/"
