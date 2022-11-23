@@ -24,9 +24,14 @@ You can align faces, using `align` class method for predicted keypoints. May be 
 ```python
 crops = model.align(orgimg, points[0])
 ```
-If you want to use model class outside root folder, export it into you PYTHONPATH
+If you want to use model class outside root folder, export it into you PYTHONPATH.
 ```bash
 export PYTHONPATH="${PYTHONPATH}:/path/to/yoloface/project/"
+```
+or the same from python.
+```python
+import sys
+sys.path.append("/path/to/yoloface/project/")
 ```
 ## Other pretrained models
 You can use any model from [yolov5-face](https://github.com/deepcam-cn/yolov5-face) repo. Default models are saved as entire torch module and are bound to the specific classes and the exact directory structure used when the model was saved by authors. To make model portable and run it via my interface you must save it as pytorch state_dict and put new weights in `weights/` folder. Example below:
