@@ -20,7 +20,7 @@ You can also pass several images packed in a list to get multi-image predictions
 ```python
 bboxes,points = model.predict([image1,image2])
 ```
-You can align faces, using `align` class method for predicted keypoints.
+You can align faces, using `align` class method for predicted keypoints. Can be useful may be useful in conjunction with facial recognition neural network to increase accuracy.
 ```python
 crops = model.align(orgimg, points[0])
 ```
