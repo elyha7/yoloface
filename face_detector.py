@@ -18,19 +18,18 @@ from utils.general import check_img_size, non_max_suppression_face, \
     scale_coords,scale_coords_landmarks,filter_boxes
 
 class YoloDetector:
-    def __init__(self, weights_name='yolov5n_state_dict.pt',config_name='yolov5n.yaml', gpu = 0, min_face=100, target_size=None, frontal=False):
+    def __init__(self, weights_name='yolov5n_state_dict.pt',config_name='yolov5n.yaml', device='cuda:0', min_face=100, target_size=None, frontal=False):
             """
             weights_name: name of file with network weights in weights/ folder.
             config_name: name of .yaml config with network configuration from models/ folder.
-            gpu : gpu number (int) or -1 or string for cpu.
+            gpu : pytorch device. Use 'cuda:0', 'cuda:1', e.t.c to use gpu or 'cpu' to use cpu.
             min_face : minimal face size in pixels.
             target_size : target size of smaller image axis (choose lower for faster work). e.g. 480, 720, 1080.
                         None for original resolution.
             frontal : if True tries to filter nonfrontal faces by keypoints location.
             """
             self._class_path = pathlib.Path(__file__).parent.absolute()#os.path.dirname(inspect.getfile(self.__class__))
-            self.gpu = gpu
-            #os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+            self.device = device
             self.target_size = target_size
             self.min_face = min_face
             self.frontal = frontal
@@ -39,13 +38,7 @@ class YoloDetector:
             self.detector = self.init_detector(weights_name,config_name)
 
     def init_detector(self,weights_name,config_name):
-        print(self.gpu)
-        if type(self.gpu) == int and self.gpu >= 0:
-            os.environ['CUDA_VISIBLE_DEVICES'] = str(self.gpu)
-            self.device = 'cuda:0'
-        else:
-            os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-            self.device = 'cpu'
+        print(self.device)
         model_path = os.path.join(self._class_path,'weights/',weights_name)
         print(model_path)
         config_path = os.path.join(self._class_path,'models/',config_name)
