@@ -22,7 +22,7 @@ bboxes,points = model.predict([image1,image2])
 ```
 You can align faces, using `align` class method for predicted keypoints.
 ```python
-crops = detector.align(orgimg, points[0])
+crops = model.align(orgimg, points[0])
 ```
 If you want to use model class outside root folder, export it into you PYTHONPATH
 ```bash
