@@ -16,19 +16,19 @@ model = YoloDetector(target_size=720,gpu=0,min_face=90)
 orgimg = np.array(Image.open('test_image.jpg'))
 bboxes,points = model.predict(orgimg)
 ```
-You can also pass several images packed in a list to get multi-image predictions.
+You can also pass several images packed in a list to get multi-image predictions:
 ```python
 bboxes,points = model.predict([image1,image2])
 ```
-You can align faces, using `align` class method for predicted keypoints. May be useful in conjunction with facial recognition neural network to increase accuracy.
+You can align faces, using `align` class method for predicted keypoints. May be useful in conjunction with facial recognition neural network to increase accuracy:
 ```python
 crops = model.align(orgimg, points[0])
 ```
-If you want to use model class outside root folder, export it into you PYTHONPATH.
+If you want to use model class outside root folder, export it into you PYTHONPATH:
 ```bash
 export PYTHONPATH="${PYTHONPATH}:/path/to/yoloface/project/"
 ```
-or the same from python.
+or the same from python:
 ```python
 import sys
 sys.path.append("/path/to/yoloface/project/")
