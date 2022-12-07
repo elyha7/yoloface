@@ -8,6 +8,8 @@ import cv2
 import copy
 import scipy
 import pathlib
+import warnings
+
 from math import sqrt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname("__file__"), '..')))
 from models.common import Conv
@@ -18,14 +20,13 @@ from utils.general import check_img_size, non_max_suppression_face, \
     scale_coords,scale_coords_landmarks,filter_boxes
 
 class YoloDetector:
-    def __init__(self, weights_name='yolov5n_state_dict.pt',config_name='yolov5n.yaml', device='cuda:0', min_face=100, target_size=None, frontal=False):
+    def __init__(self, weights_name='yolov5n_state_dict.pt', config_name='yolov5n.yaml', device='cuda:0', min_face=100, target_size=None, frontal=False):
             """
             weights_name: name of file with network weights in weights/ folder.
             config_name: name of .yaml config with network configuration from models/ folder.
             gpu : pytorch device. Use 'cuda:0', 'cuda:1', e.t.c to use gpu or 'cpu' to use cpu.
             min_face : minimal face size in pixels.
-            target_size : target size of smaller image axis (choose lower for faster work). e.g. 480, 720, 1080.
-                        None for original resolution.
+            target_size : target size of smaller image axis (choose lower for faster work). e.g. 480, 720, 1080. Choose None for original resolution.
             frontal : if True tries to filter nonfrontal faces by keypoints location.
             """
             self._class_path = pathlib.Path(__file__).parent.absolute()#os.path.dirname(inspect.getfile(self.__class__))
@@ -34,7 +35,8 @@ class YoloDetector:
             self.min_face = min_face
             self.frontal = frontal
             if self.frontal:
-                self.anti_profile = joblib.load(os.path.join(self._class_path, 'models/anti_profile/anti_profile_xgb_new.pkl'))
+                print('Currently unavailable')
+                # self.anti_profile = joblib.load(os.path.join(self._class_path, 'models/anti_profile/anti_profile_xgb_new.pkl'))
             self.detector = self.init_detector(weights_name,config_name)
 
     def init_detector(self,weights_name,config_name):
@@ -125,9 +127,18 @@ class YoloDetector:
             return True
         else:
             return False
-    def align(self,img,points):
+    def align(self, img, points):
+        '''
+            Align faces, found on images.
+            Params:
+                img: Single image, used in predict method.
+                points: list of keypoints, produced in predict method.
+            Returns:
+                crops: list of croped and aligned faces of shape (112,112,3).
+        '''
         crops = [align_faces(img,landmark=np.array(i)) for i in points]
         return crops
+
     def predict(self, imgs, conf_thres = 0.3, iou_thres = 0.5):
         '''
             Get bbox coordinates and keypoints of faces on original image.
@@ -139,18 +150,37 @@ class YoloDetector:
                 bboxes: list of arrays with 4 coordinates of bounding boxes with format x1,y1,x2,y2.
                 points: list of arrays with coordinates of 5 facial keypoints (eyes, nose, lips corners).
         '''
+        one_by_one = False
         # Pass input images through face detector
         if type(imgs) != list:
             images = [imgs]
         else:
             images = imgs
+            one_by_one = False
+            shapes = {arr.shape for arr in images}
+            if len(shapes) != 1:
+                one_by_one = True
+                warnings.warn(f"Can't use batch predict due to different shapes of input images. Using one by one strategy.")
         origimgs = copy.deepcopy(images)
         
-        images = self._preprocess(images)
-        with torch.inference_mode(): # change this with torch.no_grad() for pytorch <1.8 compatibility
-            pred = self.detector(images)[0]
-            #pred = non_max_suppression_face(pred, conf_thres, iou_thres)
-        bboxes, points = self._postprocess(images, origimgs, pred, conf_thres, iou_thres)
+        
+        if one_by_one:
+            images = [self._preprocess([img]) for img in images]
+            bboxes = [[] for i in range(len(origimgs))]
+            points = [[] for i in range(len(origimgs))]
+            for num, img in enumerate(images):
+                with torch.inference_mode(): # change this with torch.no_grad() for pytorch <1.8 compatibility
+                    single_pred = self.detector(img)[0]
+                    print(single_pred.shape)
+                bb, pt = self._postprocess(img, [origimgs[num]], single_pred, conf_thres, iou_thres)
+                #print(bb)
+                bboxes[num] = bb[0]
+                points[num] = pt[0]
+        else:
+            images = self._preprocess(images)
+            with torch.inference_mode(): # change this with torch.no_grad() for pytorch <1.8 compatibility
+                pred = self.detector(images)[0]
+            bboxes, points = self._postprocess(images, origimgs, pred, conf_thres, iou_thres)
 
         return bboxes, points
 
