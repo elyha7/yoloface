@@ -34,7 +34,7 @@ import sys
 sys.path.append("/path/to/yoloface/project/")
 ```
 ## Other pretrained models
-You can use any model from [yolov5-face](https://github.com/deepcam-cn/yolov5-face) repo. Default models are saved as entire torch module and are bound to the specific classes and the exact directory structure used when the model was saved by authors. To make model portable and run it via my interface you must save it as pytorch state_dict and put new weights in `weights/` folder. Example below:
+You can use any model from [yolov5-face](https://github.com/deepcam-cn/yolov5-face#pretrained-models) repo. Default models are saved as entire torch module and are bound to the specific classes and the exact directory structure used when the model was saved by authors. To make model portable and run it via my interface you must save it as pytorch state_dict and put new weights in `weights/` folder. Example below:
 ```python
 model = torch.load('weights/yolov5m-face.pt', map_location='cpu')['model']
 torch.save(model.state_dict(),'path/to/project/weights/yolov5m_state_dict.pt')
