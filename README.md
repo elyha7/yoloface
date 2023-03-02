@@ -12,7 +12,7 @@ from face_detector import YoloDetector
 import numpy as np
 from PIL import Image
 
-model = YoloDetector(target_size=720,gpu=0,min_face=90)
+model = YoloDetector(target_size=720, device="cuda:0", min_face=90)
 orgimg = np.array(Image.open('test_image.jpg'))
 bboxes,points = model.predict(orgimg)
 ```
