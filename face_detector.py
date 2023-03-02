@@ -24,10 +24,10 @@ class YoloDetector:
             """
             weights_name: name of file with network weights in weights/ folder.
             config_name: name of .yaml config with network configuration from models/ folder.
-            gpu : pytorch device. Use 'cuda:0', 'cuda:1', e.t.c to use gpu or 'cpu' to use cpu.
+            device : pytorch device. Use 'cuda:0', 'cuda:1', e.t.c to use gpu or 'cpu' to use cpu.
             min_face : minimal face size in pixels.
             target_size : target size of smaller image axis (choose lower for faster work). e.g. 480, 720, 1080. Choose None for original resolution.
-            frontal : if True tries to filter nonfrontal faces by keypoints location.
+            frontal : if True tries to filter nonfrontal faces by keypoints location. CURRENTRLY UNSUPPORTED.
             """
             self._class_path = pathlib.Path(__file__).parent.absolute()#os.path.dirname(inspect.getfile(self.__class__))
             self.device = device
